@@ -882,7 +882,7 @@
             v.frame = originalFrame;
     }];
 }
-
+#pragma mark -- 发送验证码
 - (void)_commitNextButtonPressed
 {
     [TGUpdateStateRequestBuilder updateNotifiedVersionUpdate];
@@ -960,7 +960,7 @@
     [self presentViewController:navigationController animated:true completion:nil];
 }
 
-#pragma mark -
+#pragma mark - 请求回调
 
 - (void)actorCompleted:(int)resultCode path:(NSString *)path result:(id)result
 {

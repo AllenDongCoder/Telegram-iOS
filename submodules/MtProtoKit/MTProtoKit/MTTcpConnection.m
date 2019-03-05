@@ -240,8 +240,8 @@ struct ctr_state {
                 ip = _socksIp;
                 port = _socksPort;
             }
-            
-            __autoreleasing NSError *error = nil;
+#pragma mark - 底层socket链接
+        __autoreleasing NSError *error = nil;
             if (![_socket connectToHost:ip onPort:port viaInterface:_interface withTimeout:12 error:&error] || error != nil) {
                 [self closeAndNotify];
             } else if (_socksIp == nil) {
@@ -439,7 +439,7 @@ struct ctr_state {
     }
     [self stop];
 }
-
+#pragma mark  ---Socket代理回调GCDAsyncSocketDelegate
 - (void)socket:(GCDAsyncSocket *)__unused socket didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)__unused tag
 {
     if (_closed)
@@ -800,7 +800,7 @@ struct ctr_state {
         [_socket readDataToLength:1 withTimeout:-1 tag:MTTcpReadTagPacketShortLength];
     }
 }
-             
+#pragma mark -- didOpen
 - (void)socket:(GCDAsyncSocket *)__unused socket didConnectToHost:(NSString *)__unused host port:(uint16_t)__unused port
 {
     if (_socksIp != nil) {

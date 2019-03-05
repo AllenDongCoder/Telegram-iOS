@@ -82,7 +82,7 @@ typedef enum {
             {
                 if (strongSelf->_usernameItem.username.length != 0)
                 {
-                    [[UIPasteboard generalPasteboard] setString:[[NSString alloc] initWithFormat:@"https://t.me/%@", strongSelf->_usernameItem.username]];
+                    [[UIPasteboard generalPasteboard] setString:[[NSString alloc] initWithFormat:@"g.me/%@", strongSelf->_usernameItem.username]];
                     [[[TGAlertView alloc] initWithTitle:nil message:TGLocalized(@"Username.LinkCopied") cancelButtonTitle:TGLocalized(@"Common.OK") okButtonTitle:nil completionBlock:nil] show];
                 }
             }
@@ -242,7 +242,7 @@ typedef enum {
     
     return true;
 }
-
+#pragma mark - 校验UserName
 - (void)usernameChanged:(NSString *)username
 {
     if (_currentCheckPath != nil)
@@ -273,13 +273,12 @@ typedef enum {
     {
         [self setUsernameState:TGUsernameControllerUsernameStateChecking username:username];
         
-        _currentCheckPath = [[NSString alloc] initWithFormat:@"/tg/checkUsernameAvailability/(%d)", (int)[_usernameItem.username hash]];
-        [ActionStageInstance() requestActor:_currentCheckPath options:@{@"username": _usernameItem.username} flags:0 watcher:self];
+        _currentCheckPath = [[NSString alloc] initWithFormat:@"/tg/checkUsernameAvailability/(%d)", (int)[_usernameItem.username hash]];        [ActionStageInstance() requestActor:_currentCheckPath options:@{@"username": _usernameItem.username} flags:0 watcher:self];
     }
     
     [self updateLinkHint:username];
 }
-
+#pragma mark - UserName 是否正确
 - (void)updateLinkHint:(NSString *)username
 {
     if (username.length == 0)
@@ -287,11 +286,11 @@ typedef enum {
     else
         [_hintItem setFormattedText:[[NSString alloc] initWithFormat:TGLocalized(@"Username.LinkHint"), username]];
 }
-
+#pragma mark - 请求回调 watcher delege
 - (void)actorCompleted:(int)status path:(NSString *)path result:(id)result
 {
     if ([path isEqualToString:_currentCheckPath])
-    {
+    {//校验
         TGDispatchOnMainThread(^
         {
             _currentCheckPath = nil;

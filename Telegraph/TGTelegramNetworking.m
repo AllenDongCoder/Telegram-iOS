@@ -300,6 +300,7 @@ static TGTelegramNetworking *singleton = nil;
             else
                 nDefaultDatacenterId = @(2);
         }
+#pragma mark -- 发送长链接 建立
         [self moveToDatacenterId:[nDefaultDatacenterId integerValue]];
         
 #ifdef DEBUG
@@ -585,7 +586,7 @@ static TGTelegramNetworking *singleton = nil;
         _requestService.delegate = nil;
         [_mtProto removeMessageService:_requestService];
     }
-    
+#pragma mark - 长链接服务对象
     _requestService = [[MTRequestMessageService alloc] initWithContext:_context];
     _requestService.delegate = self;
     [_mtProto addMessageService:_requestService];

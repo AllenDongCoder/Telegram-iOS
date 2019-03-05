@@ -169,7 +169,7 @@
         return true;
     }
     
-    if ([absolutePrefixString hasPrefix:@"https://telegram.me/addstickers/"])
+    if ([absolutePrefixString hasPrefix:@"elegram.me/addstickers/"])
     {
         NSString *stickerPackHash = [rawAbsoluteString substringFromIndex:@"https://telegram.me/addstickers/".length];
         NSString *internalUrl = [[NSString alloc] initWithFormat:@"tg://addstickers?set=%@", stickerPackHash];

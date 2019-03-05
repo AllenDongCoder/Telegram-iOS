@@ -81,7 +81,7 @@
         _requestsServiceTimer = nil;
     }
 }
-
+#pragma mark --发起长链接建立
 - (void)addRequest:(MTRequest *)request
 {
     [_queue dispatchOnQueue:^
@@ -93,7 +93,7 @@
         if (![_requests containsObject:request])
         {
             [_requests addObject:request];
-            [mtProto requestTransportTransaction];
+            [mtProto requestTransportTransaction]; //建立链接
         }
     }];
 }

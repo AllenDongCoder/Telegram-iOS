@@ -1578,12 +1578,13 @@ typedef std::map<int, std::pair<TGUser *, int > >::iterator UserDataToDispatchIt
             }];
         });
     }
-    
+    #pragma mark - 建立链接 step2 ActionStageInstance 实例化
     [ActionStageInstance() dispatchOnStageQueue:^
     {
 #if TGUseModernNetworking
         if (uid != 0)
         {
+    #pragma mark - 建立链接 step3
             [[TGTelegramNetworking instance].context updateAuthTokenForDatacenterWithId:[TGTelegramNetworking instance].mtProto.datacenterId authToken:@(uid)];
         }
 #endif

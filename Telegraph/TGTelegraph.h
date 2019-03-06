@@ -182,6 +182,10 @@ extern TGTelegraph *TGTelegraphInstance;
 - (NSObject *)doUploadFilePart:(int64_t)fileId partId:(int)partId data:(NSData *)data actor:(id<TGFileUploadActor>)actor;
 - (NSObject *)doUploadBigFilePart:(int64_t)fileId partId:(int)partId data:(NSData *)data totalParts:(int)totalParts actor:(id<TGFileUploadActor>)actor;
 
+/**
+ description:
+  发送手机验证码
+ */
 - (NSObject *)doSendConfirmationCode:(NSString *)phoneNumber requestBuilder:(TGSendCodeRequestBuilder *)requestBuilder;
 - (NSObject *)doSendConfirmationSms:(NSString *)phoneNumber phoneHash:(NSString *)phoneHash requestBuilder:(TGSendCodeRequestBuilder *)requestBuilder;
 - (NSObject *)doSendPhoneCall:(NSString *)phoneNumber phoneHash:(NSString *)phoneHash requestBuilder:(TGSendCodeRequestBuilder *)requestBuilder;

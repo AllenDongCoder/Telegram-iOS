@@ -88,11 +88,11 @@
                 self.cancelToken = [TGTelegraphInstance doSendConfirmationSms:_phone phoneHash:_phoneHash requestBuilder:self];
             }
             else
-                self.cancelToken = [TGTelegraphInstance doSendConfirmationCode:_phone requestBuilder:self];
+                self.cancelToken = [TGTelegraphInstance doSendConfirmationCode:_phone requestBuilder:self]; /// 发送请求
         }
     }
 }
-
+#pragma mark -- 发送验证码成功
 - (void)sendCodeRequestSuccess:(TLauth_SentCode$auth_sentCode *)sendCode
 {
     if (_timer != nil)
@@ -119,7 +119,7 @@
     
     [ActionStageInstance() actionCompleted:self.path result:[[SGraphObjectNode alloc] initWithObject:dict]];
 }
-
+#pragma mark -- 发送验证码失败
 - (void)sendCodeRequestFailed:(TGSendCodeError)errorCode
 {
     if (_timer != nil)
@@ -256,7 +256,7 @@
     [super cancel];
 }
 
-#pragma mark -
+#pragma mark - watcher delegate
 
 - (void)actionStageActionRequested:(NSString *)action options:(id)__unused options
 {

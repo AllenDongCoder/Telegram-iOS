@@ -2059,6 +2059,7 @@ typedef std::map<int, std::pair<TGUser *, int > >::iterator UserDataToDispatchIt
     return false;
 }
 
+#pragma mark - 发送验证码
 - (NSObject *)doSendConfirmationCode:(NSString *)phoneNumber requestBuilder:(TGSendCodeRequestBuilder *)requestBuilder
 {
     TLRPCauth_sendCode *sendCode = [[TLRPCauth_sendCode alloc] init];

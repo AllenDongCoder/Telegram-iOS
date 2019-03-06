@@ -3784,7 +3784,7 @@ static NSString *addGameShareHash(NSString *url, NSString *addHash) {
     
     return preparedMessages;
 }
-
+#pragma mark - 发送消息完 -更新UI视图
 - (NSArray *)_sendPreparedMessages:(NSArray *)preparedMessages automaticallyAddToList:(bool)automaticallyAddToList withIntent:(TGSendMessageIntent)intent
 {
 #ifdef DEBUG
@@ -4072,9 +4072,10 @@ static NSString *addGameShareHash(NSString *url, NSString *addHash) {
         if (TGPeerIdIsChannel(_conversationId)) {
             [TGDatabaseInstance() addMessagesToChannel:_conversationId messages:addToDatabaseMessages deleteMessages:nil unimportantGroups:nil addedHoles:nil removedHoles:nil removedUnimportantHoles:nil updatedMessageSortKeys:nil returnGroups:nil keepUnreadCounters:false changedMessages:nil];
         } else {
+    #pragma mark -- 更新数据库
             [TGDatabaseInstance() transactionAddMessages:addToDatabaseMessages updateConversationDatas:nil notifyAdded:false];
         }
-        
+     #pragma mark -- 更新视图方法
         [ActionStageInstance() dispatchResource:[[NSString alloc] initWithFormat:@"/tg/conversation/(%@)/messages", [self _conversationIdPathComponent]] resource:[[SGraphObjectNode alloc] initWithObject:addToDatabaseMessages]];
     }
     

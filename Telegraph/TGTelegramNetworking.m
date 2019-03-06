@@ -111,7 +111,7 @@ MTInternalIdClass(TGDownloadWorker)
     SMetaDisposable *_updateCallsConfig;
 }
 
-@property (nonatomic, strong) ASHandle *actionHandle;
+@property (nonatomic, strong) ASHandle *actionHandle; 
 
 @end
 

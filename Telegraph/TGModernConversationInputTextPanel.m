@@ -580,7 +580,7 @@ static CGRect viewFrame(UIView *view)
     
     return _inputField;
 }
-
+#pragma mark - HPGrowingTextViewDelegate
 - (BOOL)growingTextViewEnabled:(HPGrowingTextView *)__unused growingTextView
 {
     id<TGModernConversationInputTextPanelDelegate> delegate = (id<TGModernConversationInputTextPanelDelegate>)self.delegate;
@@ -1171,9 +1171,10 @@ static CGRect viewFrame(UIView *view)
         [[self inputField].internalTextView becomeFirstResponder];
     }
 }
-
+#pragma mark - 发送消息
 - (void)sendButtonPressed
 {
+    TGLog(@"Fisker -- 发送消息");
     if (_inputField.internalTextView.isFirstResponder)
         [TGHacks applyCurrentKeyboardAutocorrectionVariant];
     
@@ -1231,7 +1232,7 @@ static CGRect viewFrame(UIView *view)
         }
     }
 }
-
+#pragma mark - 文件按钮点击
 - (void)attachButtonPressed
 {
     if (self.isCustomKeyboardExpanded)
@@ -1353,7 +1354,7 @@ static CGRect viewFrame(UIView *view)
         }
     }
 }
-
+#pragma mark - micButtonDelegate 麦克风按钮点击回调
 - (void)micButtonInteractionBegan
 {
     id<TGModernConversationInputTextPanelDelegate> delegate = (id<TGModernConversationInputTextPanelDelegate>)self.delegate;

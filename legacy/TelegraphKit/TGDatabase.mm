@@ -12568,7 +12568,7 @@ typedef struct {
         return messages;
     }
 }
-
+#pragma mark - 更新数据库方法
 - (void)addMessagesToChannel:(int64_t)peerId messages:(NSArray *)initialMessages deleteMessages:(NSArray *)deleteMessages unimportantGroups:(NSArray *)unimportantGroups addedHoles:(NSArray *)addedHoles removedHoles:(NSArray *)removedHoles removedUnimportantHoles:(NSArray *)removedUnimportantHoles updatedMessageSortKeys:(NSArray *)updatedMessageSortKeys returnGroups:(bool)__unused returnGroups keepUnreadCounters:(bool)keepUnreadCounters changedMessages:(void (^)(NSArray *addedMessages, NSArray *removedMessages, NSDictionary *updatedMessages, NSArray *addedUnimportantHoles, NSArray *removedUnimportantHoles))changedMessages
 {
     [self dispatchOnDatabaseThread:^{

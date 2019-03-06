@@ -35,8 +35,17 @@
 - (void)transportConnectionProblemsStatusChanged:(MTTransport *)transport hasConnectionProblems:(bool)hasConnectionProblems isProbablyHttp:(bool)isProbablyHttp;
 
 - (void)transportReadyForTransaction:(MTTransport *)transport transportSpecificTransaction:(MTMessageTransaction *)transportSpecificTransaction forceConfirmations:(bool)forceConfirmations transactionReady:(void (^)(NSArray *))transactionReady;
-/*
- 收到数据
+
+/*!
+ @method
+ @abstract 收到数据
+ @discussion
+ @param transport <#参数描述#>
+ @param data <#参数描述#>
+ @param transactionId
+ @param requestTransactionAfterProcessing
+ @param decodeResult
+ @result void
  */
 - (void)transportHasIncomingData:(MTTransport *)transport data:(NSData *)data transactionId:(id)transactionId requestTransactionAfterProcessing:(bool)requestTransactionAfterProcessing decodeResult:(void (^)(id transactionId, bool success))decodeResult;
 - (void)transportTransactionsMayHaveFailed:(MTTransport *)transport transactionIds:(NSArray *)transactionIds;

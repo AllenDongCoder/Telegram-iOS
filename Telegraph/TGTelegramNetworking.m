@@ -220,7 +220,7 @@ static TGTelegramNetworking *singleton = nil;
         _awaitingWorkerTokensByDatacenterId = [[NSMutableDictionary alloc] init];
         
         if (_isTestingEnvironment)
-        {
+        { //测试环境
             [_context updateAddressSetForDatacenterWithId:1 addressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
                 [[MTDatacenterAddress alloc] initWithIp:@"149.154.175.10" port:443 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false]
             ]] forceUpdateSchemes:true];
@@ -229,7 +229,7 @@ static TGTelegramNetworking *singleton = nil;
             ]] forceUpdateSchemes:true];
         }
         else
-        {
+        {//线上环境
             [_context performBatchUpdates:^
             {
                 [_context setSeedAddressSetForDatacenterWithId:1 seedAddressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
@@ -260,9 +260,9 @@ static TGTelegramNetworking *singleton = nil;
         }
         
         _context.keychain = _keychain;
-        
+    #pragma mark -- 测试环境
         if (_isTestingEnvironment)
-        {
+        { //测试环境
             [_context updateAddressSetForDatacenterWithId:1 addressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
                 [[MTDatacenterAddress alloc] initWithIp:@"149.154.175.10" port:443 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false]
             ]] forceUpdateSchemes:true];

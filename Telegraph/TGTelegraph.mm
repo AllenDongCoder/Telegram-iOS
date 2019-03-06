@@ -2252,7 +2252,7 @@ typedef std::map<int, std::pair<TGUser *, int > >::iterator UserDataToDispatchIt
         }
     } progressBlock:nil requiresCompletion:true requestClass:TGRequestClassGeneric | TGRequestClassFailOnServerErrors | TGRequestClassFailOnFloodErrors | TGRequestClassPassthroughPasswordNeeded];
 }
-
+#pragma mark - 退出
 - (NSObject *)doRequestLogout:(TGLogoutRequestBuilder *)actor
 {
     TLRPCauth_logOut$auth_logOut *logout = [[TLRPCauth_logOut$auth_logOut alloc] init];

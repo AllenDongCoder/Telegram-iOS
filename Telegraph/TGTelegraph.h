@@ -194,6 +194,14 @@ extern TGTelegraph *TGTelegraphInstance;
 - (void)processEncryptedPasscode;
 - (void)processAuthorizedWithUserId:(int)uid clientIsActivated:(bool)clientIsActivated;
 - (void)processUnauthorized;
+
+/*!
+ @method
+ @abstract 退出请求
+ @discussion
+ @param atctor 退出builder
+ @result NSObject
+ */
 - (NSObject *)doRequestLogout:(TGLogoutRequestBuilder *)actor;
 
 - (NSObject *)doSendInvites:(NSArray *)phones text:(NSString *)text actor:(TGSendInvitesActor *)actor;

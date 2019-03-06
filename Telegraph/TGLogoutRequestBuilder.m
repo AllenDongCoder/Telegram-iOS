@@ -44,7 +44,7 @@
         _timer = nil;
     }
 }
-
+#pragma mark - 退出执行函数
 - (void)execute:(NSDictionary *)options
 {
     if (![[options objectForKey:@"force"] boolValue])

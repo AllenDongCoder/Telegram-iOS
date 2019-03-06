@@ -111,7 +111,7 @@ MTInternalIdClass(TGDownloadWorker)
     SMetaDisposable *_updateCallsConfig;
 }
 
-@property (nonatomic, strong) ASHandle *actionHandle; 
+@property (nonatomic, strong) ASHandle *actionHandle;
 
 @end
 
@@ -827,7 +827,7 @@ static TGTelegramNetworking *singleton = nil;
 {
     [_requestService addRequest:request];
 }
-
+#pragma mark - 发送请求
 - (NSObject *)performRpc:(TLMetaRpc *)rpc completionBlock:(void (^)(id<TLObject> response, int64_t responseTime, MTRpcError *error))completionBlock progressBlock:(void (^)(int length, float progress))progressBlock requiresCompletion:(bool)requiresCompletion requestClass:(int)requestClass
 {
     return [self performRpc:rpc completionBlock:completionBlock progressBlock:progressBlock requiresCompletion:requiresCompletion requestClass:requestClass datacenterId:INT_MAX];
@@ -851,7 +851,7 @@ static TGTelegramNetworking *singleton = nil;
     
     return 0;
 }
-
+#pragma mark - 请求核心方法
 - (NSObject *)performRpc:(TLMetaRpc *)rpc completionBlock:(void (^)(id<TLObject> response, int64_t responseTime, MTRpcError *error))completionBlock progressBlock:(void (^)(int length, float progress))__unused progressBlock quickAckBlock:(void (^)())quickAckBlock requiresCompletion:(bool)__unused requiresCompletion requestClass:(int)requestClass datacenterId:(int)datacenterId
 {
 #if TGUseModernNetworking

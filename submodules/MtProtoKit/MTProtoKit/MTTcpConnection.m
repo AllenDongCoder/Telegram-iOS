@@ -512,7 +512,7 @@ struct ctr_state {
     if (_closed)
         return;
     
-    if (tag == MTTcpSocksLogin) {
+    if (tag == MTTcpSocksLogin) { //5 Login
         if (rawData.length != sizeof(struct socks5_ident_resp)) {
             if (MTLogEnabled()) {
                 MTLog(@"***** %s: invalid socks5 login response length", __PRETTY_FUNCTION__);
@@ -563,7 +563,7 @@ struct ctr_state {
         }
         
         return;
-    } else if (tag == MTTcpSocksRequest) {
+    } else if (tag == MTTcpSocksRequest) {// 6
         struct socks5_resp resp;
         if (rawData.length != 4) {
             if (MTLogEnabled()) {
@@ -605,7 +605,7 @@ struct ctr_state {
         }
         
         return;
-    } else if (tag == MTTcpSocksReceiveBindAddrDomainNameLength) {
+    } else if (tag == MTTcpSocksReceiveBindAddrDomainNameLength) { //9
         if (rawData.length != 1) {
             if (MTLogEnabled()) {
                 MTLog(@"***** %s: invalid socks5 response domain name data length", __PRETTY_FUNCTION__);
@@ -624,7 +624,7 @@ struct ctr_state {
         [_socket readDataToLength:2 withTimeout:-1 tag:MTTcpSocksReceiveBindAddrPort];
         
         return;
-    } else if (tag == MTTcpSocksReceiveBindAddrPort) {
+    } else if (tag == MTTcpSocksReceiveBindAddrPort) {//11
         if (_connectionOpened)
             _connectionOpened();
         id<MTTcpConnectionDelegate> delegate = _delegate;
@@ -756,7 +756,7 @@ struct ctr_state {
         [_socket readDataToLength:_packetRestLength withTimeout:-1 tag:MTTcpReadTagPacketBody];
     }
     else if (tag == MTTcpReadTagPacketBody)
-    {
+    { //tag == 2 收到消息
         [_responseTimeoutTimer invalidate];
         _responseTimeoutTimer = nil;
         
@@ -776,6 +776,7 @@ struct ctr_state {
         if (_connectionReceivedData)
             _connectionReceivedData(packetData);
         id<MTTcpConnectionDelegate> delegate = _delegate;
+    #pragma mark - 收到数据
         if ([delegate respondsToSelector:@selector(tcpConnectionReceivedData:data:)])
             [delegate tcpConnectionReceivedData:self data:packetData];
         
@@ -813,7 +814,7 @@ struct ctr_state {
             [delegate tcpConnectionOpened:self];
     }
 }
-
+#pragma mark -- didClosed
 - (void)socketDidDisconnect:(GCDAsyncSocket *)__unused socket withError:(NSError *)error
 {
     if (error != nil) {

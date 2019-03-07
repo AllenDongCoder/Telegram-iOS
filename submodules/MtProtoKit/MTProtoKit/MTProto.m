@@ -430,7 +430,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
             [delegate mtProtoServiceTasksStateChanged:self isPerformingServiceTasks:performingServiceTasks || haveResendMessagesPending];
     }
 }
-
+#pragma mark - 添加MessageServicet服务
 - (void)addMessageService:(id<MTMessageService>)messageService
 {
     if ([messageService respondsToSelector:@selector(mtProtoWillAddService:)])
@@ -1954,6 +1954,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
             
             int64_t dataMessageId = 0;
             bool parseError = false;
+            //解析 decryptedData
             NSArray *parsedMessages = [self _parseIncomingMessages:decryptedData dataMessageId:&dataMessageId parseError:&parseError];
             if (parseError)
             {//解析失败
@@ -2074,7 +2075,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
     
     return [_context.serialization parseMessage:unwrappedData];
 }
-
+#pragma mark - 解析收到的二进制消息 返回 NSArray *< MTIncomingMessage *>对象
 - (NSArray *)_parseIncomingMessages:(NSData *)data dataMessageId:(out int64_t *)dataMessageId parseError:(out bool *)parseError
 {
     MTInputStream *is = [[MTInputStream alloc] initWithData:data];
@@ -2227,7 +2228,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
     
     return messages;
 }
-#pragma mark 处理接受到的消息（进行MTProto校验）
+#pragma mark 处理接受到的消息
 - (void)_processIncomingMessage:(MTIncomingMessage *)incomingMessage withTransactionId:(id)transactionId
 {
     if ([_sessionInfo messageProcessed:incomingMessage.messageId])
@@ -2412,7 +2413,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
         for (NSInteger i = (NSInteger)_messageServices.count - 1; i >= 0; i--)
         {
             id<MTMessageService> messageService = _messageServices[(NSUInteger)i];
-            
+    #pragma mark - messageService 服务发送出去
             if ([messageService respondsToSelector:@selector(mtProto:receivedMessage:)])
                 [messageService mtProto:self receivedMessage:incomingMessage];
         }

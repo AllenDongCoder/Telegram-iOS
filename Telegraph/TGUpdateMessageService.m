@@ -324,6 +324,7 @@
     
     if (collectedUpdatesWithPts.count != 0)
     {
+    #pragma mark - 刷新UI 
         [ActionStageInstance() requestActor:@"/tg/service/tryupdates/(withPts)" options:@{@"updates": collectedUpdatesWithPts} watcher:TGTelegraphInstance];
     }
     

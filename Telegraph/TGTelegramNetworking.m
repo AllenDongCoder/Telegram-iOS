@@ -481,7 +481,7 @@ static TGTelegramNetworking *singleton = nil;
         _requestService = [[MTRequestMessageService alloc] initWithContext:_context];
         _requestService.delegate = self;
         [_mtProto addMessageService:_requestService];
-        
+    #pragma mark - TGUpdateMessageService初始化
         _updateService = [[TGUpdateMessageService alloc] init];
         [_mtProto addMessageService:_updateService];
         

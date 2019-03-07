@@ -184,6 +184,7 @@ static NSMutableArray *delayedNotifications()
     if ([self.path isEqualToString:@"/tg/service/tryupdates/(withPts)"])
         [self checkPtsUpdates];
     else if ([self.path isEqualToString:@"/tg/service/tryupdates/(withSeq)"])
+#pragma mark - 接受到消息 去更新
         [self checkSeqUpdates];
     else if ([self.path isEqualToString:@"/tg/service/tryupdates/(withQts)"])
         [self checkQtsUpdates];
@@ -600,7 +601,7 @@ static NSMutableArray *delayedNotifications()
         }
     }
 }
-
+#pragma mark - 检测消息更新
 - (void)checkSeqUpdates
 {
     if (_updateList.count == 0)
@@ -1127,6 +1128,7 @@ static int64_t extractMessageConversationId(T concreteMessage, int &outFromUid)
         }
         
         _waitingForApplyUpdates = true;
+#pragma mark - TGUpdateStateRequestBuilder 状态执行者去执行
         [TGUpdateStateRequestBuilder applyUpdates:addedMessages otherUpdates:allUpdates usersDesc:usersToProcess chatsDesc:chatsToProcess chatParticipantsDesc:nil updatesWithDates:updatesWithDates addedEncryptedActionsByPeerId:nil addedEncryptedUnparsedActionsByPeerId:nil completion:^(__unused bool applied)
         {
             _waitingForApplyUpdates = false;

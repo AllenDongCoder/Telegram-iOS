@@ -1628,7 +1628,7 @@ static inline NSString *subtitleStringForUser(TGUser *user, bool &subtitleActive
         }
     }
 }
-
+#pragma mark - tableView代理
 - (UITableViewCell *)cellForRowInFirstSection:(NSInteger)__unused row
 {
     return nil;
@@ -2802,7 +2802,7 @@ static inline NSString *subtitleStringForUser(TGUser *user, bool &subtitleActive
     
     return [NSArray arrayWithArray:result];
 }
-
+#pragma mark - watcher delegate ;;
 - (void)actionStageActionRequested:(NSString *)action options:(NSDictionary *)options
 {
     if ([action isEqualToString:@"/contactlist/toggleItem"])
@@ -2864,7 +2864,7 @@ static inline NSString *subtitleStringForUser(TGUser *user, bool &subtitleActive
         [self dismissViewControllerAnimated:true completion:nil];
     }
 }
-
+#pragma mark - 收到有新消息
 - (void)actionStageResourceDispatched:(NSString *)path resource:(id)resource arguments:(id)__unused arguments
 {
     if ([path isEqualToString:@"/tg/phonebookAccessStatus"])
@@ -2950,7 +2950,7 @@ static inline NSString *subtitleStringForUser(TGUser *user, bool &subtitleActive
                             if (cell != nil && [cell isKindOfClass:[TGContactCell class]])
                             {
                                 TGContactCell *contactCell = (TGContactCell *)cell;
-                                
+        #pragma mark - 刷新cell
                                 adjustCellForUser(contactCell, user, _currentSortOrder, true, _selectedUsers, (_contactsMode & TGContactsModeMainContacts) == TGContactsModeMainContacts, _disabledUserIds.find(user.uid) != _disabledUserIds.end(), false, false, nil);
                             }
                         }

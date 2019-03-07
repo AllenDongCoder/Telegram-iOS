@@ -64,7 +64,7 @@
 - (void)setDelegateNeedsTransaction
 {
 }
-
+#pragma mark -   处理接受到的数据
 - (void)_processIncomingData:(NSData *)data transactionId:(id)transactionId requestTransactionAfterProcessing:(bool)requestTransactionAfterProcessing decodeResult:(void (^)(id transactionId, bool success))decodeResult
 {
     id<MTTransportDelegate> delegate = _delegate;

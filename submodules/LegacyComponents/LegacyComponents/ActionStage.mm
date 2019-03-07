@@ -278,7 +278,7 @@ ActionStage *ActionStageInstance()
     NSString *genericPath = [[NSString alloc] initWithCharacters:newPath length:newLength];
     return genericPath;
 }
-
+#pragma mark - 接受到消息
 - (void)_requestGeneric:(bool)joinOnly inCurrentQueue:(bool)inCurrentQueue path:(NSString *)path options:(NSDictionary *)options flags:(int)flags watcher:(id<ASWatcher>)watcher
 {
     ASHandle *actionHandle = watcher.actionHandle;
@@ -363,6 +363,7 @@ ActionStage *ActionStageInstance()
                 }
                 
                 if (executeNow)
+                #pragma mark - 执行
                     [requestBuilder execute:options];
                 else
                     requestBuilder.storedOptions = options;
@@ -991,6 +992,7 @@ ActionStage *ActionStageInstance()
                     id<ASWatcher> watcher = handle.delegate;
                     if (watcher != nil)
                     {
+#pragma mark - 传递给控制前
                         if ([watcher respondsToSelector:@selector(actionStageResourceDispatched:resource:arguments:)])
                             [watcher actionStageResourceDispatched:path resource:resource arguments:arguments];
                         

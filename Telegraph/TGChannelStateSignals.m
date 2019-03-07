@@ -342,6 +342,7 @@ static dispatch_block_t recursiveBlock(void (^block)(dispatch_block_t recurse)) 
             }
             
             if (readContentsMessageIds.count != 0) {
+                #pragma mark -ActionStage 执行刷新UI视图
                 [ActionStageInstance() dispatchResource:[NSString stringWithFormat:@"/tg/conversation/(%lld)/readmessageContents", peerId] resource:@{@"messageIds": readContentsMessageIds}];
             }
             
@@ -411,6 +412,7 @@ static dispatch_block_t recursiveBlock(void (^block)(dispatch_block_t recurse)) 
                         }
                         
                         if (updatedPts != conversation.pts) {
+    #pragma mark - 更新数据库1
                             [TGDatabaseInstance() addMessagesToChannelAndDispatch:peerId messages:addedMessages deletedMessages:deletedMessageIds holes:nil pts:updatedPts];
                         }
                         
@@ -465,6 +467,7 @@ static dispatch_block_t recursiveBlock(void (^block)(dispatch_block_t recurse)) 
                 }
                 
                 if (updatedPts != conversation.pts) {
+                     #pragma mark - 更新数据库2
                     [TGDatabaseInstance() addMessagesToChannelAndDispatch:peerId messages:addedMessages deletedMessages:deletedMessageIds holes:nil pts:updatedPts];
                 }
                 

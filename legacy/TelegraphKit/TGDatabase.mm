@@ -12858,8 +12858,9 @@ typedef struct {
             for (TGMessage *markupMessage in replyMarkupMessages) {
                 [self storeBotReplyMarkup:markupMessage.replyMarkup hideMarkupAuthorId:(int32_t)markupMessage.fromUid forPeerId:peerId messageId:markupMessage.mid];
             }
-            
+   
             [dispatchPeerUnseenMentionCounts enumerateKeysAndObjectsUsingBlock:^(NSNumber *nPeerId, NSNumber *nCount, __unused BOOL *stop) {
+                 #pragma mark - [ActionStageInstance() dispatchResource]更新UI1
                 [ActionStageInstance() dispatchResource:[NSString stringWithFormat:@"/tg/peerUnseenMentionCount/%lld", [nPeerId longLongValue]] resource:nCount];
             }];
             
@@ -12997,7 +12998,7 @@ typedef struct {
             [removedImportantMessages addObjectsFromArray:removedMessages];
             [removedUnimportantMessages addObjectsFromArray:removedMessages];
             [removedUnimportantMessages addObjectsFromArray:removedUnimportantHoles];
-            
+             #pragma mark - [ActionStageInstance() dispatchResource]更新UI 2
             [ActionStageInstance() dispatchResource:[NSString stringWithFormat:@"/tg/conversation/(%lld)/importantMessages", peerId] resource:@{@"removed": removedImportantMessages, @"added": addedImportantMessages, @"updated": updatedImportantMessages}];
             [ActionStageInstance() dispatchResource:[NSString stringWithFormat:@"/tg/conversation/(%lld)/unimportantMessages", peerId] resource:@{@"removed": removedUnimportantMessages, @"added": addedUnimportantMessages, @"updated": updatedUnimportantMessages}];
         }];

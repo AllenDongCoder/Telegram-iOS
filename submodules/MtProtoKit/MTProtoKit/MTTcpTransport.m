@@ -448,6 +448,9 @@ static const NSTimeInterval MTTcpTransportSleepWatchdogTimeout = 60.0;
 #pragma mark -- 代理回调ReceiveData
 - (void)tcpConnectionReceivedData:(MTTcpConnection *)connection data:(NSData *)data
 {
+    NSString * str  =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"str --%@",str);
+   
     MTTcpTransportContext *transportContext = _transportContext;
     [[MTTcpTransport tcpTransportQueue] dispatchOnQueue:^
     {

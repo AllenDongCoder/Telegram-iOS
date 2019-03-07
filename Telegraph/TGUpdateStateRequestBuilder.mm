@@ -1792,9 +1792,10 @@ static bool _initialUpdatesScheduled = false;
                 [messageUpdates addObject:[[TGDatabaseUpdateMessageWithMessage alloc] initWithPeerId:message.cid messageId:message.mid message:message dispatchEdited:true]];
             }
         }
-        
+
         [channelUpdatesByPeerId enumerateKeysAndObjectsUsingBlock:^(NSNumber *nPeerId, NSMutableArray *updates, __unused BOOL *stop) {
             [updates addObjectsFromArray:filteredMessageIdUpdates];
+            #pragma mark - 发送消息信号变化
             [TGChannelStateSignals addChannelUpdates:[nPeerId longLongValue] updates:updates];
         }];
         

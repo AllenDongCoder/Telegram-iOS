@@ -524,7 +524,7 @@
     else
     {
         self.inProgress = true;
-        
+#pragma mark - 发送登录请求
         static int actionIndex = 0;
         _currentActionIndex = actionIndex++;
         [ActionStageInstance() requestActor:[NSString stringWithFormat:@"/tg/service/auth/signUp/(%d)", _currentActionIndex] options:[NSDictionary dictionaryWithObjectsAndKeys:_phoneNumber, @"phoneNumber", _phoneCode, @"phoneCode", _phoneCodeHash, @"phoneCodeHash", firstNameText, @"firstName", lastNameText, @"lastName", nil] watcher:self];

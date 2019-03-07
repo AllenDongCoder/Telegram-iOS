@@ -289,7 +289,7 @@ ActionStage *ActionStageInstance()
             TGLegacyLog(@"Error: %s:%d: actionHandle.delegate is nil", __PRETTY_FUNCTION__, __LINE__); 
             return;
         }
-        
+
         NSMutableDictionary *activeRequests = _activeRequests;
         NSMutableDictionary *cancelTimers = _cancelRequestTimers;
 

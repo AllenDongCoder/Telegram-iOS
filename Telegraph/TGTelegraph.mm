@@ -1578,12 +1578,13 @@ typedef std::map<int, std::pair<TGUser *, int > >::iterator UserDataToDispatchIt
             }];
         });
     }
-    
+    #pragma mark - 建立链接 step2 ActionStageInstance 实例化
     [ActionStageInstance() dispatchOnStageQueue:^
     {
 #if TGUseModernNetworking
         if (uid != 0)
         {
+    #pragma mark - 建立链接 step3
             [[TGTelegramNetworking instance].context updateAuthTokenForDatacenterWithId:[TGTelegramNetworking instance].mtProto.datacenterId authToken:@(uid)];
         }
 #endif
@@ -2058,6 +2059,7 @@ typedef std::map<int, std::pair<TGUser *, int > >::iterator UserDataToDispatchIt
     return false;
 }
 
+#pragma mark - 发送验证码
 - (NSObject *)doSendConfirmationCode:(NSString *)phoneNumber requestBuilder:(TGSendCodeRequestBuilder *)requestBuilder
 {
     TLRPCauth_sendCode *sendCode = [[TLRPCauth_sendCode alloc] init];
@@ -2250,7 +2252,7 @@ typedef std::map<int, std::pair<TGUser *, int > >::iterator UserDataToDispatchIt
         }
     } progressBlock:nil requiresCompletion:true requestClass:TGRequestClassGeneric | TGRequestClassFailOnServerErrors | TGRequestClassFailOnFloodErrors | TGRequestClassPassthroughPasswordNeeded];
 }
-
+#pragma mark - 退出
 - (NSObject *)doRequestLogout:(TGLogoutRequestBuilder *)actor
 {
     TLRPCauth_logOut$auth_logOut *logout = [[TLRPCauth_logOut$auth_logOut alloc] init];

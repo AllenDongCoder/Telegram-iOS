@@ -293,6 +293,7 @@
             }
             
             _currentDeleteProfilePhotoItems = photoItems;
+#pragma mark - 发送请求
             self.cancelToken = [TGTelegraphInstance doDeleteProfilePhotos:photoItems actor:self];
         }
         else
@@ -387,7 +388,7 @@
 {
     [self sendEncryptedServiceMessageSuccess:0];
 }
-
+#pragma mark - watcher delegate
 - (void)actionStageResourceDispatched:(NSString *)path resource:(id)resource arguments:(id)__unused arguments
 {
     if ([path isEqualToString:@"/tg/service/cancelAcceptEncryptedChat"])

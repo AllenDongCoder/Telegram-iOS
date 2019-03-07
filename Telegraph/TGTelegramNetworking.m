@@ -220,7 +220,7 @@ static TGTelegramNetworking *singleton = nil;
         _awaitingWorkerTokensByDatacenterId = [[NSMutableDictionary alloc] init];
         
         if (_isTestingEnvironment)
-        {
+        { //测试环境
             [_context updateAddressSetForDatacenterWithId:1 addressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
                 [[MTDatacenterAddress alloc] initWithIp:@"149.154.175.10" port:443 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false]
             ]] forceUpdateSchemes:true];
@@ -229,7 +229,7 @@ static TGTelegramNetworking *singleton = nil;
             ]] forceUpdateSchemes:true];
         }
         else
-        {
+        {//线上环境
             [_context performBatchUpdates:^
             {
                 [_context setSeedAddressSetForDatacenterWithId:1 seedAddressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
@@ -260,9 +260,9 @@ static TGTelegramNetworking *singleton = nil;
         }
         
         _context.keychain = _keychain;
-        
+    #pragma mark -- 测试环境
         if (_isTestingEnvironment)
-        {
+        { //测试环境
             [_context updateAddressSetForDatacenterWithId:1 addressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
                 [[MTDatacenterAddress alloc] initWithIp:@"149.154.175.10" port:443 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false]
             ]] forceUpdateSchemes:true];
@@ -300,6 +300,7 @@ static TGTelegramNetworking *singleton = nil;
             else
                 nDefaultDatacenterId = @(2);
         }
+#pragma mark -- 发送长链接 建立
         [self moveToDatacenterId:[nDefaultDatacenterId integerValue]];
         
 #ifdef DEBUG
@@ -585,7 +586,7 @@ static TGTelegramNetworking *singleton = nil;
         _requestService.delegate = nil;
         [_mtProto removeMessageService:_requestService];
     }
-    
+#pragma mark - 长链接服务对象
     _requestService = [[MTRequestMessageService alloc] initWithContext:_context];
     _requestService.delegate = self;
     [_mtProto addMessageService:_requestService];
@@ -826,7 +827,7 @@ static TGTelegramNetworking *singleton = nil;
 {
     [_requestService addRequest:request];
 }
-
+#pragma mark - 发送请求
 - (NSObject *)performRpc:(TLMetaRpc *)rpc completionBlock:(void (^)(id<TLObject> response, int64_t responseTime, MTRpcError *error))completionBlock progressBlock:(void (^)(int length, float progress))progressBlock requiresCompletion:(bool)requiresCompletion requestClass:(int)requestClass
 {
     return [self performRpc:rpc completionBlock:completionBlock progressBlock:progressBlock requiresCompletion:requiresCompletion requestClass:requestClass datacenterId:INT_MAX];
@@ -850,7 +851,7 @@ static TGTelegramNetworking *singleton = nil;
     
     return 0;
 }
-
+#pragma mark - 请求核心方法
 - (NSObject *)performRpc:(TLMetaRpc *)rpc completionBlock:(void (^)(id<TLObject> response, int64_t responseTime, MTRpcError *error))completionBlock progressBlock:(void (^)(int length, float progress))__unused progressBlock quickAckBlock:(void (^)())quickAckBlock requiresCompletion:(bool)__unused requiresCompletion requestClass:(int)requestClass datacenterId:(int)datacenterId
 {
 #if TGUseModernNetworking

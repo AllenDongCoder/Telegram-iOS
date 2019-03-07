@@ -1796,7 +1796,7 @@ static NSString *addGameShareHash(NSString *url, NSString *addHash) {
     }
 }
 
-#pragma mark -
+#pragma mark - 开始发送消息
 
 - (void)controllerWantsToSendTextMessage:(NSString *)text entities:(NSArray *)entities asReplyToMessageId:(int32_t)replyMessageId withAttachedMessages:(NSArray *)withAttachedMessages completeGroups:(NSSet *)completeGroups disableLinkPreviews:(bool)disableLinkPreviews botContextResult:(TGBotContextResultAttachment *)botContextResult botReplyMarkup:(TGBotReplyMarkup *)botReplyMarkup
 {
@@ -1841,7 +1841,7 @@ static NSString *addGameShareHash(NSString *url, NSString *addHash) {
             NSArray *parsedEntities = entities == nil ? [TGMessage entitiesForMarkedUpText:text resultingText:&resultingText] : entities;
             TGPreparedTextMessage *preparedMessage = [[TGPreparedTextMessage alloc] initWithText:resultingText replyMessage:replyMessage disableLinkPreviews:disableLinkPreviews parsedWebpage:parsedWebpage entities:parsedEntities botContextResult:botContextResult replyMarkup:replyMarkup];
             preparedMessage.messageLifetime = [self messageLifetime];
-            [preparedMessages addObject:preparedMessage];
+            [preparedMessages addObject:preparedMessage];//将消息转换为TGPreparedTextMessage对象
         }
         else
         {
@@ -1869,10 +1869,10 @@ static NSString *addGameShareHash(NSString *url, NSString *addHash) {
         {
             [preparedMessages addObjectsFromArray:[self _createPreparedForwardMessagesFromMessages:withAttachedMessages]];
         }
-        
+    #pragma mark 执行发送函数
         [self _sendPreparedMessages:preparedMessages automaticallyAddToList:true withIntent:TGSendMessageIntentSendText];
         
-        
+    #pragma mark 更新数据库
         [TGDatabaseInstance() updatePeerDraftInteractive:_conversationId draft:nil];
         [TGDatabaseInstance() storeConversationState:_conversationId messageEditingContext:nil forwardMessageDescs:@[] scrollState:nil];
         
@@ -3784,7 +3784,7 @@ static NSString *addGameShareHash(NSString *url, NSString *addHash) {
     
     return preparedMessages;
 }
-
+#pragma mark - 发送消息完 -更新UI视图
 - (NSArray *)_sendPreparedMessages:(NSArray *)preparedMessages automaticallyAddToList:(bool)automaticallyAddToList withIntent:(TGSendMessageIntent)intent
 {
 #ifdef DEBUG
@@ -4070,11 +4070,13 @@ static NSString *addGameShareHash(NSString *url, NSString *addHash) {
     if (addToDatabaseMessages.count != 0)
     {
         if (TGPeerIdIsChannel(_conversationId)) {
+    #pragma mark -- 更新数据库
             [TGDatabaseInstance() addMessagesToChannel:_conversationId messages:addToDatabaseMessages deleteMessages:nil unimportantGroups:nil addedHoles:nil removedHoles:nil removedUnimportantHoles:nil updatedMessageSortKeys:nil returnGroups:nil keepUnreadCounters:false changedMessages:nil];
         } else {
+    #pragma mark -- 更新数据库
             [TGDatabaseInstance() transactionAddMessages:addToDatabaseMessages updateConversationDatas:nil notifyAdded:false];
         }
-        
+     #pragma mark -- 更新视图方法
         [ActionStageInstance() dispatchResource:[[NSString alloc] initWithFormat:@"/tg/conversation/(%@)/messages", [self _conversationIdPathComponent]] resource:[[SGraphObjectNode alloc] initWithObject:addToDatabaseMessages]];
     }
     

@@ -108,7 +108,7 @@ static const NSTimeInterval MTTcpTransportSleepWatchdogTimeout = 60.0;
         
         MTTcpTransportContext *transportContext = [[MTTcpTransportContext alloc] init];
         _transportContext = transportContext;
-        
+#pragma mark - MTTcpConnectionBehaviour创建 建立链接 行为对象
         [[MTTcpTransport tcpTransportQueue] dispatchOnQueue:^{
             transportContext.address = address;
             
@@ -191,7 +191,7 @@ static const NSTimeInterval MTTcpTransportSleepWatchdogTimeout = 60.0;
         }
     }];
 }
-
+#pragma mark -  建立MTTcpConnection链接对象
 - (void)startIfNeeded
 {
     MTTcpTransportContext *transportContext = _transportContext;
@@ -393,7 +393,7 @@ static const NSTimeInterval MTTcpTransportSleepWatchdogTimeout = 60.0;
         }
     }];
 }
-
+#pragma mark -- 代理回调Open
 - (void)tcpConnectionOpened:(MTTcpConnection *)connection
 {
     MTTcpTransportContext *transportContext = _transportContext;
@@ -416,7 +416,7 @@ static const NSTimeInterval MTTcpTransportSleepWatchdogTimeout = 60.0;
         [self _requestTransactionFromDelegate];
     }];
 }
-
+#pragma mark -- 代理回调closed
 - (void)tcpConnectionClosed:(MTTcpConnection *)connection
 {
     MTTcpTransportContext *transportContext = _transportContext;
@@ -445,7 +445,7 @@ static const NSTimeInterval MTTcpTransportSleepWatchdogTimeout = 60.0;
             [delegate transportTransactionsMayHaveFailed:self transactionIds:@[connection.internalId]];
     }];
 }
-
+#pragma mark -- 代理回调ReceiveData
 - (void)tcpConnectionReceivedData:(MTTcpConnection *)connection data:(NSData *)data
 {
     MTTcpTransportContext *transportContext = _transportContext;
@@ -498,7 +498,7 @@ static const NSTimeInterval MTTcpTransportSleepWatchdogTimeout = 60.0;
             [delegate transportConnectionProblemsStatusChanged:self hasConnectionProblems:true isProbablyHttp:true];
     }];
 }
-
+#pragma mark -- 代理回调ReceivedQuickAck
 - (void)tcpConnectionReceivedQuickAck:(MTTcpConnection *)connection quickAck:(int32_t)quickAck
 {
     MTTcpTransportContext *transportContext = _transportContext;
@@ -540,7 +540,7 @@ static const NSTimeInterval MTTcpTransportSleepWatchdogTimeout = 60.0;
             [delegate transportUpdatedDataReceiveProgress:self progressToken:packetProgressToken packetLength:packetLength progress:progress];
     }];
 }
-
+#pragma mark -- 建立MTTcpConnectionBehaviourDelegate 建立链接
 - (void)tcpConnectionBehaviourRequestsReconnection:(MTTcpConnectionBehaviour *)behaviour
 {
     MTTcpTransportContext *transportContext = _transportContext;
@@ -702,7 +702,7 @@ static const NSTimeInterval MTTcpTransportSleepWatchdogTimeout = 60.0;
         [transportContext.connection stop];
     }];
 }
-
+#pragma mark -  MTMessageService mtProto加密处理后的消息回调
 - (void)mtProtoDidChangeSession:(MTProto *)__unused mtProto
 {
     MTTcpTransportContext *transportContext = _transportContext;
@@ -734,7 +734,7 @@ static const NSTimeInterval MTTcpTransportSleepWatchdogTimeout = 60.0;
         }
     }];
 }
-
+#pragma mark -  MTMessageService mtProto加密处理后的消息
 - (void)mtProto:(MTProto *)__unused mtProto receivedMessage:(MTIncomingMessage *)incomingMessage
 {
     if ([incomingMessage.body isKindOfClass:[MTPongMessage class]])

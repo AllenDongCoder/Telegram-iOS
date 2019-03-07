@@ -46,7 +46,9 @@ typedef enum {
 - (void)cancelActorTimeout:(NSString *)path;
 
 - (NSString *)genericStringForParametrizedPath:(NSString *)path;
-
+/**
+    发起请求
+ */
 - (void)requestActor:(NSString *)path options:(NSDictionary *)options flags:(int)flags watcher:(id<ASWatcher>)watcher;
 - (void)requestActor:(NSString *)path options:(NSDictionary *)options watcher:(id<ASWatcher>)watcher;
 - (void)changeActorPriority:(NSString *)path;

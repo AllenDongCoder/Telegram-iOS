@@ -1498,7 +1498,7 @@ NSString *authorNameYou = @"  __TGLocalized__YOU";
         [tableView deselectRowAtIndexPath:indexPath animated:true];
 }
 
-#pragma mark - Table logic
+#pragma mark - Table logic tableView 代理
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {

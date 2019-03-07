@@ -7243,7 +7243,7 @@ typedef enum {
         [progressWindow dismiss:true];
     }];
 }
-
+#pragma mark - TGModernConversationInputTextPanelDelegate
 - (void)inputTextPanelHasIndicatedTypingActivity:(TGModernConversationInputTextPanel *)__unused inputTextPanel
 {
     if (_inputTextPanel.messageEditingContext == nil) {
@@ -7880,7 +7880,7 @@ typedef enum {
 - (void)inputPanelRequestedSendMessage:(TGModernConversationInputTextPanel *)inputTextPanel text:(NSString *)text {
     [self inputPanelRequestedSendMessage:inputTextPanel text:text entities:nil];
 }
-
+#pragma mark - 发送消息按钮回调
 - (void)inputPanelRequestedSendMessage:(TGModernConversationInputTextPanel *)__unused inputTextPanel text:(NSString *)text entities:(NSArray *)entities
 {
     if (_inputTextPanel.messageEditingContext != nil) {
@@ -7924,7 +7924,7 @@ typedef enum {
             }
         }]];
         _disableLinkPreviewsForMessage = false;
-    } else {
+    } else { //发送
         [_companion controllerWantsToSendTextMessage:text entities:entities asReplyToMessageId:[self currentReplyMessageId] withAttachedMessages:[self currentForwardMessages] completeGroups:[self currentForwardCompleteGroups] disableLinkPreviews:_disableLinkPreviewsForMessage botContextResult:nil botReplyMarkup:nil];
         _disableLinkPreviewsForMessage = false;
     }

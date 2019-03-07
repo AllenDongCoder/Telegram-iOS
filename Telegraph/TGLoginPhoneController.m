@@ -882,7 +882,7 @@
             v.frame = originalFrame;
     }];
 }
-
+#pragma mark -- 发送验证码
 - (void)_commitNextButtonPressed
 {
     [TGUpdateStateRequestBuilder updateNotifiedVersionUpdate];
@@ -915,11 +915,13 @@
         
         static int actionIndex = 0;
         _currentActionIndex = actionIndex++;
+#pragma mark -- 发送验证码请求
         _phoneNumber = [NSString stringWithFormat:@"%@%@", [_countryCodeField.text substringFromIndex:1], _phoneField.text];
         [ActionStageInstance() requestActor:[NSString stringWithFormat:@"/tg/service/auth/sendCode/(%d)", _currentActionIndex] options:[NSDictionary dictionaryWithObjectsAndKeys:_phoneNumber, @"phoneNumber", nil] watcher:self];
     }
 }
 
+# pragma mark --Action  NextStep
 - (void)nextButtonPressed
 {
     if (_inProgress)
@@ -960,12 +962,12 @@
     [self presentViewController:navigationController animated:true completion:nil];
 }
 
-#pragma mark -
+#pragma mark - (watcher delegate) 请求回调
 
 - (void)actorCompleted:(int)resultCode path:(NSString *)path result:(id)result
 {
     if ([path isEqualToString:[NSString stringWithFormat:@"/tg/service/auth/sendCode/(%d)", _currentActionIndex]])
-    {
+    {//发送验证码
         dispatch_async(dispatch_get_main_queue(), ^
         {
             self.inProgress = false;

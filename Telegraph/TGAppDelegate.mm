@@ -721,7 +721,9 @@ static unsigned int overrideIndexAbove(__unused id self, __unused SEL _cmd)
                                           
                      if (TGTelegraphInstance.clientUserId != 0)
                      {
-                         [TGTelegraphInstance processAuthorizedWithUserId:TGTelegraphInstance.clientUserId clientIsActivated:TGTelegraphInstance.clientIsActivated];
+                         
+#pragma mark - 建立链接 step1(步骤1)
+                         [TGTelegraphInstance processAuthorizedWithUserId:TGTelegraphInstance.clientUserId clientIsActivated:TGTelegraphInstance.clientIsActivated]; //调用此方法
                          if (launchOptions[UIApplicationLaunchOptionsURLKey] != nil)
                          {
                              dispatch_async(dispatch_get_main_queue(), ^

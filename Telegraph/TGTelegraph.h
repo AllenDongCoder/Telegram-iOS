@@ -182,6 +182,10 @@ extern TGTelegraph *TGTelegraphInstance;
 - (NSObject *)doUploadFilePart:(int64_t)fileId partId:(int)partId data:(NSData *)data actor:(id<TGFileUploadActor>)actor;
 - (NSObject *)doUploadBigFilePart:(int64_t)fileId partId:(int)partId data:(NSData *)data totalParts:(int)totalParts actor:(id<TGFileUploadActor>)actor;
 
+/**
+ description:
+  发送手机验证码
+ */
 - (NSObject *)doSendConfirmationCode:(NSString *)phoneNumber requestBuilder:(TGSendCodeRequestBuilder *)requestBuilder;
 - (NSObject *)doSendConfirmationSms:(NSString *)phoneNumber phoneHash:(NSString *)phoneHash requestBuilder:(TGSendCodeRequestBuilder *)requestBuilder;
 - (NSObject *)doSendPhoneCall:(NSString *)phoneNumber phoneHash:(NSString *)phoneHash requestBuilder:(TGSendCodeRequestBuilder *)requestBuilder;
@@ -190,6 +194,14 @@ extern TGTelegraph *TGTelegraphInstance;
 - (void)processEncryptedPasscode;
 - (void)processAuthorizedWithUserId:(int)uid clientIsActivated:(bool)clientIsActivated;
 - (void)processUnauthorized;
+
+/*!
+ @method
+ @abstract 退出请求
+ @discussion
+ @param atctor 退出builder
+ @result NSObject
+ */
 - (NSObject *)doRequestLogout:(TGLogoutRequestBuilder *)actor;
 
 - (NSObject *)doSendInvites:(NSArray *)phones text:(NSString *)text actor:(TGSendInvitesActor *)actor;

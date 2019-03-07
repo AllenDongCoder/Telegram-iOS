@@ -747,6 +747,7 @@
         static int actionIndex = 0;
         _currentActionIndex = actionIndex++;
         _phoneCode = _codeField.text;
+    #pragma mark - 登录
         [ActionStageInstance() requestActor:[NSString stringWithFormat:@"/tg/service/auth/signIn/(%d)", _currentActionIndex] options:[NSDictionary dictionaryWithObjectsAndKeys:_phoneNumber, @"phoneNumber", _codeField.text, @"phoneCode", _phoneCodeHash, @"phoneCodeHash", nil] watcher:self];
     }
 }

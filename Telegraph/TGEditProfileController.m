@@ -500,7 +500,7 @@
                 TGDispatchOnMainThread(^
                 {
                     [_profileDataItem setUser:user animated:true];
-                    [_usernameItem setVariant:user.userName.length == 0 ? TGLocalized(@"Settings.UsernameEmpty") : [[NSString alloc] initWithFormat:@"@%@", user.userName]];
+                    [_usernameItem setVariant:user.userName.length == 0 ? TGLocalized(@"4y") : [[NSString alloc] initWithFormat:@"@%@", user.userName]];
                     [_phoneNumberItem setVariant:user.phoneNumber.length == 0 ? @"" : [TGPhoneUtils formatPhone:user.phoneNumber forceInternational:true]];
                 });
             }
@@ -627,7 +627,7 @@
         self.collectionView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     }
 }
-
+#pragma mark -- 退出 OK
 - (void)logoutPressed
 {
     __weak TGEditProfileController *weakSelf = self;

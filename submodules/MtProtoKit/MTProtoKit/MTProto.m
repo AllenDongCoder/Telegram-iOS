@@ -334,7 +334,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
         else
         {
             MTTransport *transport = nil;
-            
+#pragma mark -- 建立长链接
             transport = [_transportScheme createTransportWithContext:_context datacenterId:_datacenterId delegate:self usageCalculationInfo:_usageCalculationInfo];
             
             [self setTransport:transport];
@@ -675,7 +675,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
 {
     return (_mtState & MTProtoStatePaused) != 0;
 }
-
+#pragma mark - MTTransportDelegate (链接状态变化)
 - (void)transportNetworkAvailabilityChanged:(MTTransport *)transport isNetworkAvailable:(bool)isNetworkAvailable
 {
     [[MTProto managerQueue] dispatchOnQueue:^
@@ -1886,7 +1886,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
         [_sessionInfo removeScheduledMessageConfirmationsWithTransactionIds:transactionIds];
     }];
 }
-
+#pragma mark - 接受到数据
 - (void)transportHasIncomingData:(MTTransport *)transport data:(NSData *)data transactionId:(id)transactionId requestTransactionAfterProcessing:(bool)requestTransactionAfterProcessing decodeResult:(void (^)(id transactionId, bool success))decodeResult
 {   
     [[MTProto managerQueue] dispatchOnQueue:^
@@ -1956,7 +1956,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
             bool parseError = false;
             NSArray *parsedMessages = [self _parseIncomingMessages:decryptedData dataMessageId:&dataMessageId parseError:&parseError];
             if (parseError)
-            {
+            {//解析失败
                 if (MTLogEnabled()) {
                     MTLog(@"[MTProto#%p incoming data parse error]", self);
                 }
@@ -1966,7 +1966,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
                 [self resetSessionInfo];
             }
             else
-            {
+            {//解析成功
                 [self transportTransactionsSucceeded:@[transactionId]];
                 
                 for (MTIncomingMessage *incomingMessage in parsedMessages)
@@ -1974,7 +1974,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
                     [self _processIncomingMessage:incomingMessage withTransactionId:transactionId];
                 }
                 
-                if (requestTransactionAfterProcessing)
+                if (requestTransactionAfterProcessing) //不会走
                     [self requestTransportTransaction];
             }
         }
@@ -2227,7 +2227,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
     
     return messages;
 }
-
+#pragma mark 处理接受到的消息（进行MTProto校验）
 - (void)_processIncomingMessage:(MTIncomingMessage *)incomingMessage withTransactionId:(id)transactionId
 {
     if ([_sessionInfo messageProcessed:incomingMessage.messageId])
@@ -2253,7 +2253,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
         [_sessionInfo scheduleMessageConfirmation:incomingMessage.messageId size:incomingMessage.size];
         
         if ([_sessionInfo scheduledMessageConfirmationsExceedSize:MTMaxUnacknowledgedMessageSize orCount:MTMaxUnacknowledgedMessageCount])
-            [self requestTransportTransaction];
+            [self requestTransportTransaction]; //不走
     }
     
     if (!_useUnauthorizedMode && [incomingMessage.body isKindOfClass:[MTBadMsgNotificationMessage class]])

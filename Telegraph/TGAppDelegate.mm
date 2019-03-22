@@ -239,6 +239,8 @@ TGTelegraph *telegraph = nil;
         _statusBarPressedPipe = [[SPipe alloc] init];
         _statusBarPressed = _statusBarPressedPipe.signalProducer();
         _finishedLaunching = [[SVariable alloc] init];
+        NSString * path = NSHomeDirectory();
+        NSLog(@"path = %@",path);
     }
     return self;
 }
@@ -356,6 +358,163 @@ static unsigned int overrideIndexAbove(__unused id self, __unused SEL _cmd)
 
 #define PGTick   NSDate *startTime = [NSDate date]
 #define PGTock   NSLog(@"!=========== %s Time: %f", __func__, -[startTime timeIntervalSinceNow])
+
+- (void)extracted:(NSDictionary * _Nullable)launchOptions startTime:(NSDate *)startTime {
+    [TGDatabaseInstance() loadConversationListFromDate:INT32_MAX limit:12 excludeConversationIds:nil completion:^(NSArray *dialogList, bool loadedAllRegular)
+     {
+         bool dialogListLoaded = [TGDatabaseInstance() customProperty:@"dialogListLoaded"].length != 0;
+         
+         NSMutableArray *filteredResult = [[NSMutableArray alloc] initWithArray:dialogList];
+         [filteredResult sortUsingComparator:^NSComparisonResult(TGConversation *lhs, TGConversation *rhs) {
+             if (lhs.date > rhs.date) {
+                 return NSOrderedAscending;
+             } else if (lhs.date < rhs.date) {
+                 return NSOrderedDescending;
+             } else {
+                 if (lhs.conversationId < rhs.conversationId) {
+                     return NSOrderedDescending;
+                 } else {
+                     return NSOrderedAscending;
+                 }
+             }
+         }];
+         
+         if (!dialogListLoaded || !loadedAllRegular) {
+             while (filteredResult.count != 0 && (((TGConversation *)[filteredResult lastObject]).isChannel || ((TGConversation *)[filteredResult lastObject]).isBroadcast)) {
+                 [filteredResult removeLastObject];
+             }
+         }
+         
+         TGLog(@"###### Dialog list loaded ######");
+         
+         SGraphListNode *node = [[SGraphListNode alloc] init];
+         node.items = filteredResult;
+         
+         PGTock;
+         TGLog(@"loaded dialogs");
+         
+         _rootController.dialogListController.debugReady = ^{
+             PGTock;
+             TGLog(@"in dialog controller");
+         };
+         [(id<ASWatcher>)_rootController.dialogListController.dialogListCompanion actorCompleted:ASStatusSuccess path:@"/tg/dialoglist/(0)" result:node]; // 加载聊天列表
+         TGLog(@"===== Dispatched dialog list");
+         
+         [ActionStageInstance() dispatchOnStageQueue:^
+          {
+              [TGTelegramNetworking preload];
+              [TGTelegraphInstance.liveLocationManager restoreSessions];
+              
+              if (TGTelegraphInstance.clientUserId != 0)
+              {
+                  
+#pragma mark - 建立链接 step1(步骤1)
+                  [TGTelegraphInstance processAuthorizedWithUserId:TGTelegraphInstance.clientUserId clientIsActivated:TGTelegraphInstance.clientIsActivated]; //调用此方法
+                  if (launchOptions[UIApplicationLaunchOptionsURLKey] != nil)
+                  {
+                      dispatch_async(dispatch_get_main_queue(), ^
+                                     {
+                                         [self handleOpenDocument:launchOptions[UIApplicationLaunchOptionsURLKey] animated:false];
+                                     });
+                  }
+                  else if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] != nil)
+                  {
+                      dispatch_async(dispatch_get_main_queue(), ^
+                                     {
+                                         id nFromId = [launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"from_id"];
+                                         id nChatId = [launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"chat_id"];
+                                         id nContactId = [launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"contact_id"];
+                                         
+                                         int64_t peerId = 0;
+                                         
+                                         if (nFromId != nil && [TGSchema canCreateIntFromObject:nFromId])
+                                         {
+                                             peerId = [TGSchema intFromObject:nFromId];
+                                         }
+                                         else if (nChatId != nil && [TGSchema canCreateIntFromObject:nChatId])
+                                         {
+                                             peerId = -[TGSchema intFromObject:nChatId];
+                                         }
+                                         else if (nContactId != nil && [TGSchema canCreateIntFromObject:nContactId])
+                                         {
+                                             peerId = [TGSchema intFromObject:nContactId];
+                                         }
+                                         
+                                         if ([UIApplication sharedApplication].applicationState == UIApplicationStateInactive)
+                                             [self _replyActionForPeerId:peerId mid:0 openKeyboard:false responseInfo:nil completion:nil];
+                                     });
+                  }
+                  else if (launchOptions[UIApplicationLaunchOptionsLocalNotificationKey] != nil)
+                  {
+                      if ([UIApplication sharedApplication].applicationState == UIApplicationStateInactive)
+                      {
+                          dispatch_async(dispatch_get_main_queue(), ^
+                                         {
+                                             if ([launchOptions respondsToSelector:@selector(objectForKeyedSubscript:)] && [launchOptions[UIApplicationLaunchOptionsLocalNotificationKey] respondsToSelector:@selector(objectForKey:)] && [launchOptions[UIApplicationLaunchOptionsLocalNotificationKey][@"cid"] respondsToSelector:@selector(longLongValue)])
+                                             {
+                                                 int64_t peerId = [[launchOptions[UIApplicationLaunchOptionsLocalNotificationKey] objectForKey:@"cid"] longLongValue];
+                                                 [self _replyActionForPeerId:peerId mid:0 openKeyboard:false responseInfo:nil completion:nil];
+                                             }
+                                         });
+                      }
+                  }
+                  
+                  TGDispatchOnMainThread(^
+                                         {
+                                             if (!TGIsPad())
+                                             {
+                                                 [TGViewController enableAutorotation];
+                                                 [TGViewController attemptAutorotation];
+                                             }
+                                         });
+              }
+              else
+              {
+                  [TGTelegraphInstance processUnauthorized];
+                  
+                  NSDictionary *blockStateDict = [self loadLoginState];
+                  
+                  dispatch_async(dispatch_get_main_queue(), ^
+                                 {
+                                     NSDictionary *stateDict = blockStateDict;
+                                     
+                                     int currentDate = ((int)CFAbsoluteTimeGetCurrent());
+                                     int stateDate = [stateDict[@"date"] intValue];
+                                     if (currentDate - stateDate > 60 * 60 * 23 && blockStateDict[@"resetAccountState"] == nil)
+                                     {
+                                         stateDict = nil;
+                                         [self resetLoginState];
+                                     }
+                                     
+                                     [self presentLoginController:false animated:false phoneNumber:stateDict[@"phoneNumber"] phoneCode:stateDict[@"phoneCode"] phoneCodeHash:stateDict[@"phoneCodeHash"] codeSentToTelegram:[stateDict[@"codeSentToTelegram"] boolValue] codeSentViaPhone:[stateDict[@"codeSentViaPhone"] boolValue] profileFirstName:stateDict[@"firstName"] profileLastName:stateDict[@"lastName"] resetAccountState:blockStateDict[@"resetAccountState"]];
+                                     
+                                     if (!TGIsPad())
+                                     {
+                                         [TGViewController enableAutorotation];
+                                         [TGViewController attemptAutorotation];
+                                     }
+                                 });
+                  
+                  [[TGDatabase instance] dropDatabase];
+              }
+              
+              TGDispatchOnMainThread(^{
+                  [_rootController.callsController initialize];
+              });
+              
+              [[TGTelegramNetworking instance] start];
+              
+              [_finishedLaunching set:[SSignal single:@true]];
+              
+              if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] != nil)
+                  [self processPossibleConfigUpdateNotification:launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]];
+              
+              [[[TGBridgeServer instanceSignal] onNext:^(TGBridgeServer *server) {
+                  [server startRunning];
+              }] startWithNext:nil];
+          }];
+     }];
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -674,160 +833,7 @@ static unsigned int overrideIndexAbove(__unused id self, __unused SEL _cmd)
         
         [TGDatabaseInstance() dispatchOnDatabaseThread:^
          {
-             [TGDatabaseInstance() loadConversationListFromDate:INT32_MAX limit:12 excludeConversationIds:nil completion:^(NSArray *dialogList, bool loadedAllRegular)
-             {
-                 bool dialogListLoaded = [TGDatabaseInstance() customProperty:@"dialogListLoaded"].length != 0;
-                 
-                 NSMutableArray *filteredResult = [[NSMutableArray alloc] initWithArray:dialogList];
-                 [filteredResult sortUsingComparator:^NSComparisonResult(TGConversation *lhs, TGConversation *rhs) {
-                     if (lhs.date > rhs.date) {
-                         return NSOrderedAscending;
-                     } else if (lhs.date < rhs.date) {
-                         return NSOrderedDescending;
-                     } else {
-                         if (lhs.conversationId < rhs.conversationId) {
-                             return NSOrderedDescending;
-                         } else {
-                             return NSOrderedAscending;
-                         }
-                     }
-                 }];
-                 
-                 if (!dialogListLoaded || !loadedAllRegular) {
-                     while (filteredResult.count != 0 && (((TGConversation *)[filteredResult lastObject]).isChannel || ((TGConversation *)[filteredResult lastObject]).isBroadcast)) {
-                         [filteredResult removeLastObject];
-                     }
-                 }
-                 
-                 TGLog(@"###### Dialog list loaded ######");
-                 
-                 SGraphListNode *node = [[SGraphListNode alloc] init];
-                 node.items = filteredResult;
-                 
-                 PGTock;
-                 TGLog(@"loaded dialogs");
-                 
-                 _rootController.dialogListController.debugReady = ^{
-                     PGTock;
-                     TGLog(@"in dialog controller");
-                 };
-                 [(id<ASWatcher>)_rootController.dialogListController.dialogListCompanion actorCompleted:ASStatusSuccess path:@"/tg/dialoglist/(0)" result:node];
-                 TGLog(@"===== Dispatched dialog list");
-                 
-                 [ActionStageInstance() dispatchOnStageQueue:^
-                 {
-                     [TGTelegramNetworking preload];                     
-                     [TGTelegraphInstance.liveLocationManager restoreSessions];
-                                          
-                     if (TGTelegraphInstance.clientUserId != 0)
-                     {
-                         
-#pragma mark - 建立链接 step1(步骤1)
-                         [TGTelegraphInstance processAuthorizedWithUserId:TGTelegraphInstance.clientUserId clientIsActivated:TGTelegraphInstance.clientIsActivated]; //调用此方法
-                         if (launchOptions[UIApplicationLaunchOptionsURLKey] != nil)
-                         {
-                             dispatch_async(dispatch_get_main_queue(), ^
-                             {
-                                 [self handleOpenDocument:launchOptions[UIApplicationLaunchOptionsURLKey] animated:false];
-                             });
-                         }
-                         else if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] != nil)
-                         {
-                             dispatch_async(dispatch_get_main_queue(), ^
-                             {
-                                 id nFromId = [launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"from_id"];
-                                 id nChatId = [launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"chat_id"];
-                                 id nContactId = [launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"contact_id"];
-                                 
-                                 int64_t peerId = 0;
-                                 
-                                 if (nFromId != nil && [TGSchema canCreateIntFromObject:nFromId])
-                                 {
-                                     peerId = [TGSchema intFromObject:nFromId];
-                                 }
-                                 else if (nChatId != nil && [TGSchema canCreateIntFromObject:nChatId])
-                                 {
-                                     peerId = -[TGSchema intFromObject:nChatId];
-                                 }
-                                 else if (nContactId != nil && [TGSchema canCreateIntFromObject:nContactId])
-                                 {
-                                     peerId = [TGSchema intFromObject:nContactId];
-                                 }
-                                 
-                                 if ([UIApplication sharedApplication].applicationState == UIApplicationStateInactive)
-                                     [self _replyActionForPeerId:peerId mid:0 openKeyboard:false responseInfo:nil completion:nil];
-                             });
-                         }
-                         else if (launchOptions[UIApplicationLaunchOptionsLocalNotificationKey] != nil)
-                         {
-                             if ([UIApplication sharedApplication].applicationState == UIApplicationStateInactive)
-                             {
-                                 dispatch_async(dispatch_get_main_queue(), ^
-                                 {
-                                     if ([launchOptions respondsToSelector:@selector(objectForKeyedSubscript:)] && [launchOptions[UIApplicationLaunchOptionsLocalNotificationKey] respondsToSelector:@selector(objectForKey:)] && [launchOptions[UIApplicationLaunchOptionsLocalNotificationKey][@"cid"] respondsToSelector:@selector(longLongValue)])
-                                     {
-                                         int64_t peerId = [[launchOptions[UIApplicationLaunchOptionsLocalNotificationKey] objectForKey:@"cid"] longLongValue];
-                                         [self _replyActionForPeerId:peerId mid:0 openKeyboard:false responseInfo:nil completion:nil];
-                                     }
-                                 });
-                             }
-                         }
-                         
-                         TGDispatchOnMainThread(^
-                         {
-                             if (!TGIsPad())
-                             {
-                                 [TGViewController enableAutorotation];
-                                 [TGViewController attemptAutorotation];
-                             }
-                         });
-                     }
-                     else
-                     {
-                         [TGTelegraphInstance processUnauthorized];
-                         
-                         NSDictionary *blockStateDict = [self loadLoginState];
-                         
-                         dispatch_async(dispatch_get_main_queue(), ^
-                         {
-                             NSDictionary *stateDict = blockStateDict;
-                             
-                             int currentDate = ((int)CFAbsoluteTimeGetCurrent());
-                             int stateDate = [stateDict[@"date"] intValue];
-                             if (currentDate - stateDate > 60 * 60 * 23 && blockStateDict[@"resetAccountState"] == nil)
-                             {
-                                 stateDict = nil;
-                                 [self resetLoginState];
-                             }
-                             
-                             [self presentLoginController:false animated:false phoneNumber:stateDict[@"phoneNumber"] phoneCode:stateDict[@"phoneCode"] phoneCodeHash:stateDict[@"phoneCodeHash"] codeSentToTelegram:[stateDict[@"codeSentToTelegram"] boolValue] codeSentViaPhone:[stateDict[@"codeSentViaPhone"] boolValue] profileFirstName:stateDict[@"firstName"] profileLastName:stateDict[@"lastName"] resetAccountState:blockStateDict[@"resetAccountState"]];
-                             
-                             if (!TGIsPad())
-                             {
-                                 [TGViewController enableAutorotation];
-                                 [TGViewController attemptAutorotation];
-                             }
-                         });
-                         
-                         [[TGDatabase instance] dropDatabase];
-                     }
-                     
-                     TGDispatchOnMainThread(^{
-                        [_rootController.callsController initialize];
-                     });
-                     
-                     [[TGTelegramNetworking instance] start];
-                     
-                     [_finishedLaunching set:[SSignal single:@true]];
-                     
-                     if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] != nil)
-                         [self processPossibleConfigUpdateNotification:launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]];
-                     
-                     [[[TGBridgeServer instanceSignal] onNext:^(TGBridgeServer *server) {
-                         [server startRunning];
-                     }] startWithNext:nil];
-                 }];
-              }];
+             [self extracted:launchOptions startTime:startTime];//同步服务信息
          } synchronous:false];
     });
     
@@ -2762,6 +2768,7 @@ static unsigned int overrideIndexAbove(__unused id self, __unused SEL _cmd)
             
             if (ip.length != 0)
             {
+#pragma mark - 更新ip
                 [[TGTelegramNetworking instance] mergeDatacenterAddress:datacenterId address:[[MTDatacenterAddress alloc] initWithIp:ip port:(uint16_t)(port == 0 ? 443 : port) preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false]];
             }
         }

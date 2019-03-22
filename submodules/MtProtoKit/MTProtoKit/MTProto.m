@@ -575,7 +575,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
         }
     }];
 }
-
+# pragma mark - 消息重传
 - (void)requestMessageWithId:(int64_t)messageId
 {
     bool alreadyRequestingThisMessage = false;
@@ -2073,7 +2073,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
     if (internalMessage != nil)
         return internalMessage;
     
-    return [_context.serialization parseMessage:unwrappedData];
+    return [_context.serialization parseMessage:unwrappedData]; //TGTLSerialization
 }
 #pragma mark - 解析收到的二进制消息 返回 NSArray *< MTIncomingMessage *>对象
 - (NSArray *)_parseIncomingMessages:(NSData *)data dataMessageId:(out int64_t *)dataMessageId parseError:(out bool *)parseError
@@ -2384,7 +2384,7 @@ static const NSUInteger MTMaxUnacknowledgedMessageCount = 64;
             shouldRequest = true;
         
         if (shouldRequest)
-        {
+        {//需要重新传送
             [self requestMessageWithId:detailedInfoMessage.responseMessageId];
             if (MTLogEnabled()) {
                 MTLog(@"[MTProto#%p will request message %" PRId64 "", self, detailedInfoMessage.responseMessageId);

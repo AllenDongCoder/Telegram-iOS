@@ -6,6 +6,8 @@
 //
 //  App api_id:    708271
 //  App api_hash:  4ce3ac29d9f01fbb3f4c30895978462c
+//_phoneCodeHash
+//622bec61e46c74a111
 #ifndef Config_h
 #define Config_h
 

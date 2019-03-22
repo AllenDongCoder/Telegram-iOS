@@ -93,7 +93,7 @@
 {
     return _sessionId;
 }
-
+#pragma mark - 客户端生成消息标志的算法
 - (int64_t)generateClientMessageId:(bool *)monotonityViolated
 {
     int64_t messageId = (int64_t)([_context globalTime] * 4294967296);

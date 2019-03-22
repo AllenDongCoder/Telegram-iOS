@@ -1056,7 +1056,7 @@ typedef enum {
     
     return selfPeer;
 }
-
+#pragma mark - 请求h完回调刷新UI
 - (void)actorCompleted:(int)resultCode path:(NSString *)path result:(id)result
 {
     bool hideSelf = self.forwardMode;

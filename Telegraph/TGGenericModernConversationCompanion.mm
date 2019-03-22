@@ -6021,7 +6021,7 @@ static NSString *addGameShareHash(NSString *url, NSString *addHash) {
     
     [super actionStageResourceDispatched:path resource:resource arguments:arguments];
 }
-
+#pragma mark - 收到消息12
 - (void)actorMessageReceived:(NSString *)path messageType:(NSString *)messageType message:(id)message
 {
     NSString *sendMessagePathPrefix = [self _sendMessagePathPrefix];
@@ -6130,7 +6130,7 @@ static NSString *addGameShareHash(NSString *url, NSString *addHash) {
         });
     }
 }
-
+#pragma mark - ASWatcher actor完成
 - (void)actorCompleted:(int)status path:(NSString *)path result:(id)result
 {
     NSString *sendMessagePathPrefix = [self _sendMessagePathPrefix];

@@ -786,7 +786,7 @@
     [viewControllers addObject:controller];
     [self.navigationController setViewControllers:viewControllers animated:true];
 }
-
+#pragma mark - 登录完成
 - (void)actorCompleted:(int)resultCode path:(NSString *)path result:(id)result
 {
     if ([path isEqualToString:[NSString stringWithFormat:@"/tg/service/auth/signIn/(%d)", _currentActionIndex]])

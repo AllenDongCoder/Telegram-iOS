@@ -731,7 +731,7 @@ static NSArray *editingButtonTypes(bool muted, bool pinned, bool mutable) {
         }
     }
 }
-
+#pragma mark - 刷新Cell
 - (void)resetView:(bool)keepState
 {
     if (self.selectionStyle != UITableViewCellSelectionStyleBlue)
@@ -1449,7 +1449,7 @@ static NSArray *editingButtonTypes(bool muted, bool pinned, bool mutable) {
             }
         }
     }
-    
+    #pragma mark - 赋值操作
     _textView.text = _messageText;
     _textView.textColor = _messageTextColor;
     _textView.mediaIcon = _mediaIcon;

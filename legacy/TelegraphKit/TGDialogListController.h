@@ -37,6 +37,13 @@ extern NSString *authorNameYou;
 - (void)startSearch;
 
 - (void)resetState;
+/*!
+ @method
+ @abstract 全局刷新
+ @discussion
+ @param  items
+ @result void
+ */
 - (void)dialogListFullyReloaded:(NSArray *)items;
 - (void)updateConversations:(NSDictionary *)dict;
 - (void)dialogListItemsChanged:(NSArray *)insertedIndices insertedItems:(NSArray *)insertedItems updatedIndices:(NSArray *)updatedIndices updatedItems:(NSArray *)updatedItems removedIndices:(NSArray *)removedIndices;

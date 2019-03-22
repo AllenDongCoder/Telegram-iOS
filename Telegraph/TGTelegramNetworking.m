@@ -615,7 +615,7 @@ static TGTelegramNetworking *singleton = nil;
         }
     }];
 }
-
+#pragma mark - merge服务地址
 - (void)mergeDatacenterAddress:(NSInteger)datacenterId address:(MTDatacenterAddress *)address
 {
 #if TGUseModernNetworking

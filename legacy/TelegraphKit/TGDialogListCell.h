@@ -84,7 +84,13 @@
 - (void)setTypingString:(NSString *)typingString animated:(bool)animated;
 - (void)restartAnimations:(bool)force;
 - (void)stopAnimations;
-
+/*!
+ @method
+ @abstract 刷新cell
+ @discussion
+ @param
+ @result
+ */
 - (void)resetView:(bool)keepState;
 
 - (void)dismissEditingControls:(bool)animated;

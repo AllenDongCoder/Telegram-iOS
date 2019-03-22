@@ -986,7 +986,7 @@ NSString *authorNameYou = @"  __TGLocalized__YOU";
     }
 }
 
-#pragma mark - List management
+#pragma mark - List management刷新列表
 
 - (void)reloadData:(bool)animateFrameTransitions
 {
@@ -1180,7 +1180,7 @@ NSString *authorNameYou = @"  __TGLocalized__YOU";
         }
     }
 }
-
+#pragma mark - cell （item）有变化
 - (void)dialogListItemsChanged:(NSArray *)__unused insertedIndices insertedItems:(NSArray *)__unused insertedItems updatedIndices:(NSArray *)__unused updatedIndices updatedItems:(NSArray *)__unused updatedItems removedIndices:(NSArray *)__unused removedIndices
 {
     int countBefore = (int)_listModel.count;
@@ -1401,7 +1401,7 @@ NSString *authorNameYou = @"  __TGLocalized__YOU";
 {
     [_dialogListCompanion composeMessageAndOpenSearch:false];
 }
-
+#pragma mark - tableView代理方法
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static bool canSelect = true;
@@ -1430,6 +1430,7 @@ NSString *authorNameYou = @"  __TGLocalized__YOU";
             
             if (conversation != nil)
             {
+                #pragma mark - 跳转至聊天窗口
                 [_dialogListCompanion conversationSelected:conversation];
             }
             
@@ -1498,7 +1499,7 @@ NSString *authorNameYou = @"  __TGLocalized__YOU";
         [tableView deselectRowAtIndexPath:indexPath animated:true];
 }
 
-#pragma mark - Table logic tableView 代理
+#pragma mark - tableView 代理方法
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -1551,7 +1552,7 @@ NSString *authorNameYou = @"  __TGLocalized__YOU";
         return 51.0f;
     }
 }
-
+#pragma mark - 刷新cell
 - (void)prepareCell:(TGDialogListCell *)cell forConversation:(TGConversation *)conversation animated:(bool)animated isSearch:(bool)isSearch
 {
     if (cell.reuseTag != (intptr_t)conversation || cell.conversationId != conversation.conversationId || cell.unreadCount != conversation.unreadCount || cell.serviceUnreadCount != conversation.serviceUnreadCount || cell.unreadMentionCount != conversation.unreadMentionCount)
@@ -2266,7 +2267,7 @@ NSString *authorNameYou = @"  __TGLocalized__YOU";
     _conversationIdToDelete = 0;
 }
 
-#pragma mark -
+#pragma mark - TGSearchDisplayMixinDelegate
 
 - (UITableView *)createTableViewForSearchMixin:(TGSearchDisplayMixin *)__unused searchMixin
 {

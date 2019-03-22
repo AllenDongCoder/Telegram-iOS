@@ -478,7 +478,7 @@ typedef void (^TGDatabaseCleanupEverythingBlock)();
 - (void)channelEarlierMessage:(int64_t)peerId messageId:(int32_t)messageId timestamp:(int32_t)timestamp important:(bool)important completion:(void (^)(bool exists, TGMessageSortKey key))completion;
 /*!
  @method
- @abstract  更新数据库方法<#方法描述#>
+ @abstract  更新数据库方法
  @discussion
  @param
  @result void

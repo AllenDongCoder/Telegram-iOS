@@ -218,7 +218,7 @@
 - (void)cancelPressed {
     [self.presentingViewController dismissViewControllerAnimated:true completion:nil];
 }
-
+# pragma mark - 代理配置
 - (void)donePressed {
     if (_completion) {
         _completion([[MTSocksProxySettings alloc] initWithIp:_addressItem.username port:(uint16_t)[_portItem.username intValue] username:_usernameItem.username password:_passwordItem.username], _typeNone.isChecked);

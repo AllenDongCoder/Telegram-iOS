@@ -385,7 +385,7 @@
 - (void)autosavePhotosPressed {
     [self.navigationController pushViewController:[[TGAutoDownloadSettingsController alloc] initWithMode:TGAutoDownloadSettingsModeSaveIncomingPhotos] animated:true];
 }
-
+#pragma mark -  配置代理方式
 - (void)useProxyPressed {
     TGProxySetupController *controller = [[TGProxySetupController alloc] initWithCurrentSettings];
     __weak TGChatSettingsController *weakSelf = self;
